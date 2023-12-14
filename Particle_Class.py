@@ -4,9 +4,6 @@ import numpy as np
 #Radius defined so that behaviour of two particles with close locations is non-singular
 PARTICLE_RADIUS = 0.1
 
-#Coefficient of damping
-MU = 100
-
 #Class definition for partcle in simulation
 class Particle:
 
