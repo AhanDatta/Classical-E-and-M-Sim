@@ -19,14 +19,16 @@ end_time = User_Input.end_time
 #List of particles in the simulation from user input
 particles = User_Input.particles
 
-#Creating lists which track position and velocity for each particle
+#Creating lists which track position, velocity, and acceleration for each particle
 position_in_time = []
 velocity_in_time = []
+accel_in_time = []
 for i in range(len(particles)):
     position_in_time.append([])
     velocity_in_time.append([])
+    accel_in_time.append([])
 
-#Using Runge-Kutta and classical electrodynamics, we simulate the motion of the particles over a given time interval
+#Using Euler's method and classical electrodynamics, we simulate the motion of the particles over a given time interval
 current_time = 0
 while current_time < end_time:
     #Tracks position and velocity updates that need to be made for all particles
@@ -71,14 +73,17 @@ while current_time < end_time:
         #Finds the net acceleration on a particle using F = ma, F_e = qE = kq(E/k), and F_B = qv x B, so a = (q/m) (E + v x B)
         acceleration = (particle_i.charge/particle_i.mass) * (K * e_field + (MU_0/(4 * math.pi)) * np.cross(particle_i.velocity, B_field))
         
-        #Tracks position and velocity updates, using the average of the old and new velocities to update the position
-        delta_v.append(acceleration * dt)
+        #Updates the acceleration vector of this particle
+        accel_in_time[i].append(acceleration)
+
+        #Tracks position and velocity updates, using the weighted average of the last two entries for each
+        delta_v.append((2 * acceleration + accel_in_time[i][len(accel_in_time[i]) - 1]) * dt)
         delta_x.append((2*particle_i.velocity + delta_v[-1])/2 * dt)
 
     #Logs the state of each particle
     for i in range(len(particles)):
         position_in_time[i].append(deepcopy(particles[i].position))
-        velocity_in_time[i].append(deepcopy(particles[i].velocity[:]))
+        velocity_in_time[i].append(deepcopy(particles[i].velocity))
 
     #Updates the state of each particle
     for i in range(len(particles)):

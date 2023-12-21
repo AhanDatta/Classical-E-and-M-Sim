@@ -42,16 +42,22 @@ while True:
         except ValueError:
             print("Please enter only numbers for each velocity.")
 
-    #Gets the mass and charge from the user
-    mass = 1
+    #Gets the mass from the user, checking that it is non-zero
+    mass = 0
+    while mass == 0:
+        try:
+            mass = float(input("Enter the mass of the particle (number): "))
+        except ValueError:
+            print("Please enter only non-zero numbers for mass")
+
+    #Gets the charge from the user
     charge = 1
     while True:
         try:
-            mass = float(input("Enter the mass of the particle (number): "))
             charge = float(input("Enter the charge of the particle (number): "))
             break
         except ValueError:
-            print("Please enter only numbers for mass and charge.")
+            print("Please enter only numbers for charge.")
 
     #Creates new particle and appends it to the list of particles
     particles.append(Particle(position, velocity, charge, mass))

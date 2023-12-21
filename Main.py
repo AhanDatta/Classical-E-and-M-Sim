@@ -6,7 +6,10 @@ import Simulator
 
 #Takes a list of lists lst and returns a list of the ith element of each sublist
 def Extract(lst, i):
-    return [sub[i] for sub in lst]
+    answer = []
+    for sub in lst:
+        answer.append(sub[i])
+    return answer
 
 #Defines a dictionary to color the subplots
 color_dict = {
@@ -26,12 +29,14 @@ dir_dict = {
 time_axis = np.arange(0, Simulator.end_time + Simulator.dt, Simulator.dt)
 positions = Simulator.position_in_time
 velocities = Simulator.velocity_in_time
+accelerations = Simulator.accel_in_time
 
 #Fixes length of lists to ensure plotting works
 if len(time_axis) > len(positions[0]):
     for i in range(len(positions)):
         positions[i].append(positions[i][-1])
         velocities[i].append(velocities[i][-1])
+        accelerations[i].append(accelerations[i][-1])
 elif len(time_axis) < len(positions[0]):
     time_axis = [0] + time_axis
 
@@ -62,6 +67,20 @@ for i in range(len(velocities)):
     for k, ax in axd.items():
         ax.plot(time_axis, Extract(velocities[i], int(k)), color_dict[int(k)])
         ax.set_xlabel("Time [s]")
-        ax.set_ylabel(dir_dict[int(k)] + " velocity [m]")
+        ax.set_ylabel(dir_dict[int(k)] + " velocity [m/s]")
+
+for i in range(len(accelerations)):
+    #Creates a figure and axes with a certain layout
+    fig, axd = plt.subplot_mosaic([['0', '1'],
+                                ['2', '2']],
+                                layout="constrained")
+    
+    fig.suptitle("Particle " + str(i+1) + " Acceleration")
+
+    #Puts the position wrt a axis on each of the axes
+    for k, ax in axd.items():
+        ax.plot(time_axis, Extract(accelerations[i], int(k)), color_dict[int(k)])
+        ax.set_xlabel("Time [s]")
+        ax.set_ylabel(dir_dict[int(k)] + " acceleration [m/s^2]")
 
 plt.show()
